@@ -35,10 +35,21 @@ class local_nosey_observer {
 
         if (isset($eventrecord->userid)) {
           $portalid = $DB->get_field('user', 'idnumber', array('id' => $eventrecord->userid));
+
+            $user_email = $USER->email;
+            $eventrecord->user_email = $user_email;
+            $eventrecord->fullname = fullname($USER, true);
+
+            $course = $DB->get_record('course', array('id' => $eventdata['courseid']));
+            $eventrecord->coursename = $course->shortname;
+            $eventrecord->idnumber = $course->idnumber;
+
           if (intval($portalid) > 0) {
             $eventrecord->portalid = $portalid;
           }
         }
+        $sharedsecret = get_config('auth/wp2moodle');
+        $data["api_key"] = $sharedsecret->sharedsecret;
 
         $data["record"] = $eventrecord;
 
